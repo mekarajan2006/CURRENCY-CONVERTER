@@ -1,0 +1,51 @@
+import pandas as pd
+import numpy as np
+
+# Sample currency exchange rates as a DataFrame (replace with actual data or API integration)
+exchange_rates = pd.DataFrame({
+    'Currency': ['USD', 'EUR', 'GBP', 'INR', 'JPY'],
+    'Rate_to_USD': [1, 1.1, 1.25, 0.012, 0.0088]  # Rates relative to 1 USD
+})
+
+# Function to convert currency
+def convert_currency(amount, from_currency, to_currency):
+    try:
+        # Check if both currencies exist in the exchange rates
+        if from_currency not in exchange_rates['Currency'].values or to_currency not in exchange_rates['Currency'].values:
+            raise ValueError("One or both currencies are not available.")
+
+        # Fetch the rates for the selected currencies
+        from_rate = exchange_rates.loc[exchange_rates['Currency'] == from_currency, 'Rate_to_USD'].values[0]
+        to_rate = exchange_rates.loc[exchange_rates['Currency'] == to_currency, 'Rate_to_USD'].values[0]
+
+        # Conversion calculation
+        usd_equivalent = amount / from_rate
+        converted_amount = usd_equivalent * to_rate
+
+        return round(converted_amount, 2)
+
+    except ValueError as e:
+        return str(e)
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+if __name__ == "__main__":
+    print("Currency Converter")
+    print("Available Currencies: USD, EUR, GBP, INR, JPY")
+
+    try:
+        amount = float(input("Enter the amount to convert: "))
+        from_currency = input("Enter the source currency (e.g., USD): ").upper()
+        to_currency = input("Enter the target currency (e.g., EUR): ").upper()
+
+        result = convert_currency(amount, from_currency, to_currency)
+
+        if isinstance(result, float):
+            print(f"{amount} {from_currency} is equal to {result} {to_currency}.")
+        else:
+            print(result)
+
+    except ValueError:
+        print("Invalid amount. Please enter a numeric value.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
